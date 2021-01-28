@@ -9,15 +9,15 @@ export default class WeatherApi extends HttpClient {
     super(WEATHER_API_URL);
   }
 
-  public request<T>(config: AxiosRequestConfig = {}): Promise<T> {
-    return this.instance.request(merge(config, {
-      params: { APPID: '' },
-    }));
-  }
-
   public getWeather(config: AxiosRequestConfig = {}) {
     return this.request<TWeather>(merge(config, {
       params: { units: 'metric' },
+    }));
+  }
+
+  public request<T>(config: AxiosRequestConfig = {}): Promise<T> {
+    return this.instance.request(merge(config, {
+      params: { APPID: process.env.VUE_APP_WEATHER_API_APPID },
     }));
   }
 }

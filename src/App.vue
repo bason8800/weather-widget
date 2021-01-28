@@ -49,7 +49,7 @@ const WidgetSettings = defineAsyncComponent(
 );
 
 export default defineComponent({
-  name: 'App',
+  name: 'WeatherWidget',
   components: {
     WidgetList,
     WidgetSettings,
