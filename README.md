@@ -3,7 +3,7 @@
 ## Project setup
 ```
 yarn install
-create .env.local and add VUE_APP__WEATHER_API_APPID
+create .env.local and add VUE_APP_WEATHER_API_APPID
 ```
 
 ### Compiles and hot-reloads for development
