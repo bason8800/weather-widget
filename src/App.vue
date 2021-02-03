@@ -133,7 +133,7 @@ export default defineComponent({
 
       if (cities.length) {
         cities.forEach((q) => {
-          requestsParams.push({ q: { asd: 123 } });
+          requestsParams.push({ q });
         });
       }
 
