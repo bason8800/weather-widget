@@ -101,8 +101,8 @@ export default defineComponent({
   }
 
   &__close {
-    margin-left: auto;
     width: 15px;
+    margin-left: auto;
     cursor: pointer;
   }
 

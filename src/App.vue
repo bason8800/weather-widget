@@ -3,27 +3,33 @@
     <BaseLoader v-if="!isAppLoaded" key="loader" />
 
     <transition v-else appear mode="out-in" name="transition-fade">
-      <WidgetSettings
-        v-if="showSettings"
-        class="weather-main__block-settings"
-        :list="weatherList"
-        :show-loader="loading"
-        :error-message="errorMessage"
-        @add-city="onAddCity"
-        @close="onToggleSettings"
-        @delete="onDelete"
-        @dragend="onDragend"
-      />
-
-      <div v-else class="weather-main__content">
-        <img
-          class="weather-main__btn-settings"
-          src="@/assets/svg/settings.svg"
-          @click="onToggleSettings"
-        >
-
-        <WidgetList :list="weatherList" />
+      <div v-if="unexpectedError" class="weather-main__error">
+        Internal error
       </div>
+
+      <template v-else>
+        <WidgetSettings
+          v-if="showSettings"
+          class="weather-main__block-settings"
+          :list="weatherList"
+          :show-loader="loading"
+          :error-message="errorMessage"
+          @add-city="onAddCity"
+          @close="onToggleSettings"
+          @delete="onDelete"
+          @dragend="onDragend"
+        />
+
+        <div v-else class="weather-main__content">
+          <img
+            class="weather-main__btn-settings"
+            src="@/assets/svg/settings.svg"
+            @click="onToggleSettings"
+          >
+
+          <WidgetList :list="weatherList" />
+        </div>
+      </template>
     </transition>
   </div>
 </template>
@@ -43,6 +49,7 @@ import { cityStorage } from '@/storage';
 import { getGeolocationCoords } from '@/modules/geolocation';
 
 import WidgetList from '@/components/widget/WidgetList.vue';
+import { MOSCOW_COORDS, STATUS_CODE } from '@/constants';
 
 const WidgetSettings = defineAsyncComponent(
   () => import('@/components/widget/WidgetSettings.vue'),
@@ -60,6 +67,7 @@ export default defineComponent({
     const showSettings = ref(false);
     const loading = ref(false);
     const errorMessage = ref('');
+    const unexpectedError = ref(false);
 
     const showEmptyList = computed(
       () => !weatherList.value.length && isAppLoaded.value && !showSettings.value,
@@ -125,22 +133,39 @@ export default defineComponent({
 
       if (cities.length) {
         cities.forEach((q) => {
-          requestsParams.push({ q });
+          requestsParams.push({ q: { asd: 123 } });
         });
       }
 
       return requestsParams;
     };
 
+    const getDefaultCityWeather = async () => {
+      weatherList.value = [
+        await weatherApi.getWeather({
+          params: { lat: MOSCOW_COORDS.latitude, lon: MOSCOW_COORDS.longitude },
+        }),
+      ];
+    };
+
     const fetchData = async () => {
-      const requestsParams = await getRequestsParams();
-      const promises = requestsParams.map(
-        (params: unknown) => weatherApi.getWeather({ params }),
-      );
+      try {
+        const requestsParams = await getRequestsParams();
+        const promises = requestsParams.map(
+          (params: unknown) => weatherApi.getWeather({ params }),
+        );
 
-      weatherList.value = await Promise.all(promises);
+        weatherList.value = await Promise.all(promises);
+      } catch ({ response = {} }) {
+        if (response.status === STATUS_CODE.notFound) {
+          await getDefaultCityWeather();
+          return;
+        }
 
-      isAppLoaded.value = true;
+        unexpectedError.value = true;
+      } finally {
+        isAppLoaded.value = true;
+      }
     };
 
     onMounted(async () => {
@@ -153,6 +178,7 @@ export default defineComponent({
       isAppLoaded,
       loading,
       errorMessage,
+      unexpectedError,
       showSettings,
       showEmptyList,
 
@@ -167,33 +193,37 @@ export default defineComponent({
 
 <style lang="scss">
 #app {
+  margin-top: 60px;
   font-family: Avenir, Helvetica, Arial, sans-serif;
+  color: $color-main;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: $color-main;
-  margin-top: 60px;
 }
 
 .weather-main {
-  width: 250px;
   position: relative;
+  width: 250px;
+
+  &__error {
+    font-size: 25px;
+  }
 
   &__btn-settings {
-    width: 25px;
     position: absolute;
-    right: 0;
     top: -4px;
+    right: 0;
+    width: 25px;
     cursor: pointer;
   }
 
   &__block-settings {
     position: absolute;
-    width: 100%;
-    left: 0;
     top: 0;
-    background: $color-white;
+    left: 0;
     z-index: 2;
+    width: 100%;
     height: 100%;
+    background: $color-white;
   }
 }
 </style>

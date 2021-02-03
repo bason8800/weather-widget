@@ -33,24 +33,24 @@ export default {
 
 <style lang="scss">
 .widget-preview {
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
   height: 40px;
-  box-sizing: border-box;
   padding: 5px 10px;
   background: $color-lavender;
 
   &__drag {
-    cursor: pointer;
     width: 20px;
     margin-right: 15px;
+    cursor: pointer;
   }
 
   &__delete {
-    cursor: pointer;
     width: 20px;
     margin-left: auto;
+    cursor: pointer;
   }
 }
 </style>

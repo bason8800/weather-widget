@@ -93,9 +93,9 @@ export default defineComponent({
 .base-input {
   &__label {
     display: block;
-    font-weight: bold;
     margin-bottom: 7px;
     font-size: 13px;
+    font-weight: bold;
   }
 
   &__inner {
@@ -104,11 +104,11 @@ export default defineComponent({
   }
 
   &__input {
-    height: 40px;
     box-sizing: border-box;
-    outline: none;
-    border: 1px solid #ccc;
+    height: 40px;
     padding: 7px 14px 9px;
+    border: 1px solid #ccc;
+    outline: none;
     transition: 0.4s;
 
     &:focus {
@@ -121,8 +121,8 @@ export default defineComponent({
   }
 
   &__error {
-    font-size: 13px;
     margin-top: 5px;
+    font-size: 13px;
     color: $color-red;
   }
 }

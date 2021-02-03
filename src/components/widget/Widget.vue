@@ -16,10 +16,10 @@
       </div>
 
       <div class="weather-widget__info-list">
-        <div class="weather-widget__info-item">
+        <div class="weather-widget__info-item has-icon is-wind">
           {{ data.wind.speed }}m/s SSE
         </div>
-        <div class="weather-widget__info-item">
+        <div class="weather-widget__info-item has-icon is-pressure">
           {{ data.main.pressure }}hPa
         </div>
         <div class="weather-widget__info-item">
@@ -78,9 +78,9 @@ export default defineComponent({
   &__main {
     display: flex;
     align-items: center;
+    height: 100px;
     font-size: 30px;
     font-weight: bold;
-    height: 100px;
   }
 
   &__info-description {
@@ -95,6 +95,36 @@ export default defineComponent({
   &__info-item {
     width: 50%;
     margin-bottom: 15px;
+
+    &.has-icon {
+      display: flex;
+      align-self: center;
+
+      &::before {
+        position: relative;
+        top: -2px;
+        display: inline-block;
+        margin-right: 4px;
+        content: "";
+        background-size: contain;
+      }
+    }
+
+    &.is-wind {
+      &::before {
+        width: 20px;
+        height: 20px;
+        background-image: url("~@/assets/svg/wind.svg");
+      }
+    }
+
+    &.is-pressure {
+      &::before {
+        width: 20px;
+        height: 20px;
+        background-image: url("~@/assets/svg/pressure.svg");
+      }
+    }
   }
 }
 </style>
